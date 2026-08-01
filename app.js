@@ -14,8 +14,8 @@
   el.speedButtons = [...document.querySelectorAll(".speed-button")];
 
   let lessonIndex = 0;
-  let itemIndex = Number(localStorage.getItem("englishReflex.v15.itemIndex") || 0);
-  let playbackSpeed = Number(localStorage.getItem("englishReflex.v15.playbackSpeed") || 1);
+  let itemIndex = Number(localStorage.getItem("englishReflex.v16.itemIndex") || 0);
+  let playbackSpeed = Number(localStorage.getItem("englishReflex.v16.playbackSpeed") || 1);
   let isRunning = false;
   let runToken = 0;
   let deferredInstallPrompt = null;
@@ -51,7 +51,7 @@
     el.questionMeaningText.textContent = el.showMeaning.checked ? item.questionMeaning || "" : "";
     el.answerMeaningText.textContent = el.showMeaning.checked ? item.answerMeaning || "" : "";
     el.progressText.textContent = `Câu ${itemIndex + 1}/${lesson().items.length}`;
-    localStorage.setItem("englishReflex.v15.itemIndex", String(itemIndex));
+    localStorage.setItem("englishReflex.v16.itemIndex", String(itemIndex));
   }
 
   const setPhase = text => { el.phaseText.textContent = text; };
@@ -123,15 +123,16 @@
     while (isRunning && token === runToken) {
       const item = resolvedItem();
       updateScreen();
-      setPhase("Nghe câu hỏi");
-      setCountdown("Nghe kỹ");
-      if (!(await speakText(item.questionSpeech || item.question, token))) break;
-      if (!(await wait(Number(data.settings.pauseAfterQuestionMs || 700), token))) break;
 
       const repeats = Math.max(1, Number(data.settings.answerRepeats || 3));
       let ok = true;
       for (let repeat = 1; repeat <= repeats; repeat += 1) {
-        setPhase(`Nghe đáp án ${repeat}/${repeats}`);
+        setPhase(`Nghe câu hỏi ${repeat}/${repeats}`);
+        setCountdown("Nghe câu hỏi");
+        if (!(await speakText(item.questionSpeech || item.question, token))) { ok = false; break; }
+        if (!(await wait(Number(data.settings.pauseAfterQuestionMs || 700), token))) { ok = false; break; }
+
+        setPhase(`Nghe câu trả lời ${repeat}/${repeats}`);
         setCountdown("Nghe đúng âm rồi nhại theo");
         if (!(await speakText(item.answerSpeech || item.answer, token))) { ok = false; break; }
         if (!(await wait(Number(data.settings.pauseForImitationMs || 2400), token))) { ok = false; break; }
@@ -155,7 +156,7 @@
 
   function applySpeedSelection(speed) {
     playbackSpeed = Number(speed);
-    localStorage.setItem("englishReflex.v15.playbackSpeed", String(playbackSpeed));
+    localStorage.setItem("englishReflex.v16.playbackSpeed", String(playbackSpeed));
     el.speedButtons.forEach(b => b.classList.toggle("active", Number(b.dataset.speed) === playbackSpeed));
     window.speechSynthesis?.cancel();
   }

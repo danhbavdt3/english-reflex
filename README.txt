@@ -1,4 +1,4 @@
-English Reflex V1.5 - Bài 1
+English Reflex V1.6 - Bài 1
 
 Bản này đã bỏ hoàn toàn phần hình minh họa để giảm dung lượng và tránh lỗi tải ảnh/cache ảnh.
 
@@ -12,3 +12,6 @@ Nội dung:
 - Câu 11 luân phiên: book, hat, pencil.
 - Bốn tốc độ đọc.
 - Dùng giọng đọc hệ thống, không dùng MP3 xử lý.
+
+
+V1.6: Mỗi lượt luyện đều đọc lại câu hỏi trước khi đọc câu trả lời.
