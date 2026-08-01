@@ -14,8 +14,8 @@
   el.speedButtons = [...document.querySelectorAll(".speed-button")];
 
   let lessonIndex = 0;
-  let itemIndex = Number(localStorage.getItem("englishReflex.v16.itemIndex") || 0);
-  let playbackSpeed = Number(localStorage.getItem("englishReflex.v16.playbackSpeed") || 1);
+  let itemIndex = Number(localStorage.getItem("englishReflex.v17.itemIndex") || 0);
+  let playbackSpeed = Number(localStorage.getItem("englishReflex.v17.playbackSpeed") || 1);
   let isRunning = false;
   let runToken = 0;
   let deferredInstallPrompt = null;
@@ -51,7 +51,7 @@
     el.questionMeaningText.textContent = el.showMeaning.checked ? item.questionMeaning || "" : "";
     el.answerMeaningText.textContent = el.showMeaning.checked ? item.answerMeaning || "" : "";
     el.progressText.textContent = `Câu ${itemIndex + 1}/${lesson().items.length}`;
-    localStorage.setItem("englishReflex.v16.itemIndex", String(itemIndex));
+    localStorage.setItem("englishReflex.v17.itemIndex", String(itemIndex));
   }
 
   const setPhase = text => { el.phaseText.textContent = text; };
@@ -69,13 +69,13 @@
     updatePlayButton();
   }
 
-  function wait(ms, token) {
+  function wait(ms, token, label) {
     return new Promise(resolve => {
       const started = performance.now();
       const tick = () => {
         if (token !== runToken) return resolve(false);
         const remain = Math.max(0, ms - (performance.now() - started));
-        if (ms >= 1500) setCountdown(`Nhại theo · ${Math.ceil(remain / 1000)} giây`);
+        if (ms >= 1000) setCountdown(`${label} · ${Math.ceil(remain / 1000)} giây`);
         if (remain <= 0) return resolve(true);
         setTimeout(tick, 100);
       };
@@ -130,17 +130,19 @@
         setPhase(`Nghe câu hỏi ${repeat}/${repeats}`);
         setCountdown("Nghe câu hỏi");
         if (!(await speakText(item.questionSpeech || item.question, token))) { ok = false; break; }
-        if (!(await wait(Number(data.settings.pauseAfterQuestionMs || 700), token))) { ok = false; break; }
+        setPhase(`Bạn trả lời ${repeat}/${repeats}`);
+        if (!(await wait(Number(data.settings.pauseAfterQuestionMs || 3500), token, "Bạn trả lời"))) { ok = false; break; }
 
         setPhase(`Nghe câu trả lời ${repeat}/${repeats}`);
         setCountdown("Nghe đúng âm rồi nhại theo");
         if (!(await speakText(item.answerSpeech || item.answer, token))) { ok = false; break; }
-        if (!(await wait(Number(data.settings.pauseForImitationMs || 2400), token))) { ok = false; break; }
+        setPhase(`Bạn nhại theo ${repeat}/${repeats}`);
+        if (!(await wait(Number(data.settings.pauseForImitationMs || 3000), token, "Bạn nhại theo"))) { ok = false; break; }
       }
       if (!ok || token !== runToken || !isRunning) break;
 
       advanceVariant();
-      if (!(await wait(Number(data.settings.pauseBetweenItemsMs || 900), token))) break;
+      if (!(await wait(Number(data.settings.pauseBetweenItemsMs || 900), token, "Chuyển câu"))) break;
       if (itemIndex < lesson().items.length - 1) itemIndex += 1;
       else if (el.loopLesson.checked) itemIndex = 0;
       else { isRunning = false; setPhase("Hoàn thành"); setCountdown("Đã học hết bài"); break; }
@@ -156,7 +158,7 @@
 
   function applySpeedSelection(speed) {
     playbackSpeed = Number(speed);
-    localStorage.setItem("englishReflex.v16.playbackSpeed", String(playbackSpeed));
+    localStorage.setItem("englishReflex.v17.playbackSpeed", String(playbackSpeed));
     el.speedButtons.forEach(b => b.classList.toggle("active", Number(b.dataset.speed) === playbackSpeed));
     window.speechSynthesis?.cancel();
   }

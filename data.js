@@ -1,12 +1,12 @@
 window.ENGLISH_REFLEX_DATA = {
-  version: "1.6.0",
+  version: "1.7.0",
   settings: {
     language: "en-US",
     speechRate: 0.84,
     speechPitch: 1.0,
     answerRepeats: 3,
-    pauseAfterQuestionMs: 700,
-    pauseForImitationMs: 2400,
+    pauseAfterQuestionMs: 3500,
+    pauseForImitationMs: 3000,
     pauseBetweenItemsMs: 900
   },
   lessons: [{
