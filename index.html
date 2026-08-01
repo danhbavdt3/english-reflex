@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Phản xạ Anh">
+  <title>English Reflex V1 · Bài 1</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css?v=1.5.0">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <h1>Luyện phản xạ tiếng Anh</h1>
+        <p>V1.5 · BÀI 1</p>
+      </div>
+      <button id="installButton" class="small-button hidden" type="button">Cài app</button>
+    </header>
+
+    <section class="card lesson-select-card">
+      <label for="lessonSelect">Bài luyện</label>
+      <select id="lessonSelect" aria-label="Chọn bài luyện"></select>
+    </section>
+
+    <section class="card practice-card" aria-live="polite">
+      <div class="progress-row">
+        <span id="progressText">Câu 1/1</span>
+        <span id="voiceText" class="voice-badge">Giọng hệ thống</span>
+        <span id="phaseText">Sẵn sàng</span>
+      </div>
+
+      <div class="text-block">
+        <span class="label">Câu hỏi</span>
+        <div id="questionText" class="english-text">—</div>
+        <div id="questionMeaningText" class="meaning-text question-meaning"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="text-block">
+        <span class="label">Đáp án mẫu</span>
+        <div id="answerText" class="english-text answer-text">—</div>
+        <div id="answerMeaningText" class="meaning-text answer-meaning"></div>
+      </div>
+
+      <div id="countdown" class="countdown">Bấm Phát để bắt đầu</div>
+    </section>
+
+    <section class="controls" aria-label="Điều khiển bài học">
+      <button id="prevButton" class="control-button secondary" type="button">◀<span>Câu trước</span></button>
+      <button id="playButton" class="control-button primary" type="button">▶<span>Phát</span></button>
+      <button id="repeatButton" class="control-button secondary" type="button">↻<span>Lặp câu</span></button>
+      <button id="nextButton" class="control-button secondary" type="button">▶<span>Câu sau</span></button>
+    </section>
+
+    <section class="card speed-card">
+      <div class="speed-title">Tốc độ đọc</div>
+      <div class="speed-options" role="group" aria-label="Chọn tốc độ đọc">
+        <button class="speed-button" type="button" data-speed="0.68">Rất chậm</button>
+        <button class="speed-button" type="button" data-speed="0.82">Chậm</button>
+        <button class="speed-button active" type="button" data-speed="1">Trung bình</button>
+        <button class="speed-button" type="button" data-speed="1.15">Nhanh</button>
+      </div>
+    </section>
+
+    <section class="card settings-card">
+      <label class="check-row">
+        <input id="loopLesson" type="checkbox" checked>
+        <span>Lặp lại cả bài khi học hết</span>
+      </label>
+      <label class="check-row">
+        <input id="showMeaning" type="checkbox" checked>
+        <span>Hiện nghĩa tiếng Việt</span>
+      </label>
+    </section>
+
+    <p id="statusMessage" class="status-message"></p>
+  </main>
+
+  <script src="data.js?v=1.5.0"></script>
+  <script src="app.js?v=1.5.0"></script>
+</body>
+</html>
