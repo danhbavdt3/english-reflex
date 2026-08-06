@@ -1,5 +1,5 @@
 window.ENGLISH_REFLEX_DATA = {
-  version: "1.7.0",
+  version: "1.8.0",
   settings: {
     language: "en-US",
     speechRate: 0.84,

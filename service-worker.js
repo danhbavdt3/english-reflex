@@ -1,6 +1,6 @@
-const CACHE_NAME = "english-reflex-v1-7-0";
+const CACHE_NAME = "english-reflex-v1-8-0";
 const APP_FILES = [
-  "./", "./index.html", "./styles.css?v=1.7.0", "./data.js?v=1.7.0", "./app.js?v=1.7.0",
+  "./", "./index.html", "./styles.css?v=1.8.0", "./data.js?v=1.8.0", "./app.js?v=1.8.0",
   "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png"
 ];
 self.addEventListener("install", event => {

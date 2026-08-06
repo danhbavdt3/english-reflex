@@ -10,14 +10,14 @@
   <title>English Reflex V1 · Bài 1</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=1.7.0">
+  <link rel="stylesheet" href="styles.css?v=1.8.0">
 </head>
 <body>
   <main class="app-shell">
     <header class="topbar">
       <div>
         <h1>Luyện phản xạ tiếng Anh</h1>
-        <p>V1.7 · BÀI 1</p>
+        <p>V1.8 · BÀI 1</p>
       </div>
       <button id="installButton" class="small-button hidden" type="button">Cài app</button>
     </header>
@@ -25,6 +25,11 @@
     <section class="card lesson-select-card">
       <label for="lessonSelect">Bài luyện</label>
       <select id="lessonSelect" aria-label="Chọn bài luyện"></select>
+    </section>
+
+    <section class="card mode-card" aria-label="Chọn chế độ">
+      <button id="practiceModeButton" class="mode-button active" type="button">Luyện nghe và nhại</button>
+      <button id="testModeButton" class="mode-button" type="button">Kiểm tra phản xạ</button>
     </section>
 
     <section class="card practice-card" aria-live="polite">
@@ -40,14 +45,15 @@
         <div id="questionMeaningText" class="meaning-text question-meaning"></div>
       </div>
 
-      <div class="divider"></div>
+      <div id="answerDivider" class="divider"></div>
 
-      <div class="text-block">
+      <div id="answerBlock" class="text-block">
         <span class="label">Đáp án mẫu</span>
         <div id="answerText" class="english-text answer-text">—</div>
         <div id="answerMeaningText" class="meaning-text answer-meaning"></div>
       </div>
 
+      <button id="revealAnswerButton" class="reveal-answer-button hidden" type="button">Xem câu trả lời</button>
       <div id="countdown" class="countdown">Bấm Phát để bắt đầu</div>
     </section>
 
@@ -82,7 +88,7 @@
     <p id="statusMessage" class="status-message"></p>
   </main>
 
-  <script src="data.js?v=1.7.0"></script>
-  <script src="app.js?v=1.7.0"></script>
+  <script src="data.js?v=1.8.0"></script>
+  <script src="app.js?v=1.8.0"></script>
 </body>
 </html>

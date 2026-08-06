@@ -9,13 +9,17 @@
   const el = Object.fromEntries([
     "lessonSelect","questionText","questionMeaningText","answerText","answerMeaningText",
     "voiceText","progressText","phaseText","countdown","playButton",
-    "repeatButton","prevButton","nextButton","loopLesson","showMeaning","statusMessage","installButton"
+    "repeatButton","prevButton","nextButton","loopLesson","showMeaning","statusMessage","installButton",
+    "practiceModeButton","testModeButton","revealAnswerButton","answerBlock","answerDivider"
   ].map(id => [id, document.getElementById(id)]));
   el.speedButtons = [...document.querySelectorAll(".speed-button")];
 
   let lessonIndex = 0;
-  let itemIndex = Number(localStorage.getItem("englishReflex.v17.itemIndex") || 0);
-  let playbackSpeed = Number(localStorage.getItem("englishReflex.v17.playbackSpeed") || 1);
+  let itemIndex = Number(localStorage.getItem("englishReflex.v18.itemIndex") || 0);
+  let playbackSpeed = Number(localStorage.getItem("englishReflex.v18.playbackSpeed") || 1);
+  let mode = localStorage.getItem("englishReflex.v18.mode") === "test" ? "test" : "practice";
+  let answerRevealed = false;
+  let testCountdownFinished = false;
   let isRunning = false;
   let runToken = 0;
   let deferredInstallPrompt = null;
@@ -51,7 +55,42 @@
     el.questionMeaningText.textContent = el.showMeaning.checked ? item.questionMeaning || "" : "";
     el.answerMeaningText.textContent = el.showMeaning.checked ? item.answerMeaning || "" : "";
     el.progressText.textContent = `Câu ${itemIndex + 1}/${lesson().items.length}`;
-    localStorage.setItem("englishReflex.v17.itemIndex", String(itemIndex));
+    localStorage.setItem("englishReflex.v18.itemIndex", String(itemIndex));
+    updateModeScreen();
+  }
+
+
+  function updateModeScreen() {
+    const isTest = mode === "test";
+    el.practiceModeButton.classList.toggle("active", !isTest);
+    el.testModeButton.classList.toggle("active", isTest);
+    el.repeatButton.classList.toggle("hidden", isTest);
+    el.loopLesson.closest("label").classList.toggle("hidden", isTest);
+    el.revealAnswerButton.classList.toggle("hidden", !isTest || answerRevealed || !testCountdownFinished);
+    el.answerBlock.classList.toggle("hidden", isTest && !answerRevealed);
+    el.answerDivider.classList.toggle("hidden", isTest && !answerRevealed);
+    if (isTest && !answerRevealed) {
+      el.answerText.textContent = resolvedItem().answer;
+      el.answerMeaningText.textContent = el.showMeaning.checked ? resolvedItem().answerMeaning || "" : "";
+    }
+  }
+
+  function setMode(nextMode) {
+    stopAll();
+    mode = nextMode;
+    answerRevealed = mode !== "test";
+    testCountdownFinished = false;
+    localStorage.setItem("englishReflex.v18.mode", mode);
+    updateScreen();
+    setPhase("Sẵn sàng");
+    setCountdown(mode === "test" ? "Bấm Phát để nghe câu hỏi" : "Bấm Phát để bắt đầu");
+  }
+
+  function revealAnswer() {
+    answerRevealed = true;
+    updateModeScreen();
+    setPhase("Đã hiện câu trả lời");
+    setCountdown("Tự đối chiếu câu bạn vừa trả lời");
   }
 
   const setPhase = text => { el.phaseText.textContent = text; };
@@ -113,7 +152,35 @@
     });
   }
 
+
+  async function playTestQuestion() {
+    stopAll();
+    const token = runToken;
+    isRunning = true;
+    answerRevealed = false;
+    testCountdownFinished = false;
+    updateScreen();
+    updatePlayButton();
+    el.statusMessage.textContent = "";
+    const item = resolvedItem();
+    setPhase("Nghe câu hỏi");
+    setCountdown("Nghe câu hỏi");
+    const spoken = await speakText(item.questionSpeech || item.question, token);
+    if (spoken && token === runToken) {
+      setPhase("Bạn trả lời");
+      await wait(5000, token, "Bạn trả lời");
+      if (token === runToken) {
+        testCountdownFinished = true;
+        updateModeScreen();
+        setPhase("Hết 5 giây");
+        setCountdown("Bấm Xem câu trả lời để đối chiếu");
+      }
+    }
+    if (token === runToken) { isRunning = false; updatePlayButton(); }
+  }
+
   async function playCurrentSequence() {
+    if (mode === "test") return playTestQuestion();
     stopAll();
     const token = runToken;
     isRunning = true;
@@ -153,12 +220,13 @@
   function moveItem(step) {
     stopAll();
     itemIndex = (itemIndex + step + lesson().items.length) % lesson().items.length;
+    answerRevealed = mode !== "test";
     updateScreen(); setPhase("Sẵn sàng"); setCountdown("Bấm Phát để bắt đầu");
   }
 
   function applySpeedSelection(speed) {
     playbackSpeed = Number(speed);
-    localStorage.setItem("englishReflex.v17.playbackSpeed", String(playbackSpeed));
+    localStorage.setItem("englishReflex.v18.playbackSpeed", String(playbackSpeed));
     el.speedButtons.forEach(b => b.classList.toggle("active", Number(b.dataset.speed) === playbackSpeed));
     window.speechSynthesis?.cancel();
   }
@@ -167,9 +235,12 @@
     const option = document.createElement("option"); option.value = index; option.textContent = item.title;
     el.lessonSelect.appendChild(option);
   });
-  el.lessonSelect.addEventListener("change", () => { stopAll(); lessonIndex = Number(el.lessonSelect.value); itemIndex = 0; updateScreen(); });
-  el.playButton.addEventListener("click", () => isRunning ? (stopAll(), setPhase("Đã dừng"), setCountdown("Bấm Phát để nghe lại từ đầu câu")) : playCurrentSequence());
+  el.lessonSelect.addEventListener("change", () => { stopAll(); lessonIndex = Number(el.lessonSelect.value); itemIndex = 0; answerRevealed = mode !== "test"; testCountdownFinished = false; updateScreen(); });
+  el.playButton.addEventListener("click", () => isRunning ? (stopAll(), setPhase("Đã dừng"), setCountdown(mode === "test" ? "Bấm Phát để nghe lại câu hỏi" : "Bấm Phát để nghe lại từ đầu câu")) : playCurrentSequence());
   el.repeatButton.addEventListener("click", playCurrentSequence);
+  el.practiceModeButton.addEventListener("click", () => setMode("practice"));
+  el.testModeButton.addEventListener("click", () => setMode("test"));
+  el.revealAnswerButton.addEventListener("click", revealAnswer);
   el.prevButton.addEventListener("click", () => moveItem(-1));
   el.nextButton.addEventListener("click", () => moveItem(1));
   el.showMeaning.addEventListener("change", updateScreen);
@@ -177,7 +248,7 @@
   window.addEventListener("beforeinstallprompt", event => { event.preventDefault(); deferredInstallPrompt = event; el.installButton.classList.remove("hidden"); });
   el.installButton.addEventListener("click", async () => { if (!deferredInstallPrompt) return; deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice; deferredInstallPrompt = null; el.installButton.classList.add("hidden"); });
   window.speechSynthesis?.addEventListener?.("voiceschanged", loadVoices);
-  loadVoices(); applySpeedSelection(playbackSpeed); updateScreen(); setPhase("Sẵn sàng"); setCountdown("Bấm Phát để bắt đầu");
+  loadVoices(); applySpeedSelection(playbackSpeed); answerRevealed = mode !== "test"; updateScreen(); setPhase("Sẵn sàng"); setCountdown(mode === "test" ? "Bấm Phát để nghe câu hỏi" : "Bấm Phát để bắt đầu");
 
   const localHost = ["localhost", "127.0.0.1"].includes(location.hostname);
   if (localHost && "serviceWorker" in navigator) {

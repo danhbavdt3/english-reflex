@@ -239,3 +239,41 @@ select {
 @media (max-width: 520px) {
   .speed-options { grid-template-columns: repeat(2, 1fr); }
 }
+
+.mode-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 8px;
+  margin-bottom: 14px;
+}
+.mode-button {
+  min-height: 48px;
+  border: 1px solid #d6ddea;
+  border-radius: 12px;
+  background: #fff;
+  color: #26334c;
+  font-weight: 800;
+  cursor: pointer;
+}
+.mode-button.active {
+  border-color: #1454d8;
+  background: #1454d8;
+  color: #fff;
+}
+.reveal-answer-button {
+  align-self: center;
+  min-height: 48px;
+  margin: 22px auto 0;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 12px;
+  background: #167052;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+.answer-hidden { visibility: hidden; }
+@media (max-width: 520px) {
+  .mode-card { grid-template-columns: 1fr; }
+}

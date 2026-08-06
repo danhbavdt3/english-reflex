@@ -1,4 +1,4 @@
-English Reflex V1.7 - Bài 1
+English Reflex V1.8 - Bài 1
 
 Bản này đã bỏ hoàn toàn phần hình minh họa để giảm dung lượng và tránh lỗi tải ảnh/cache ảnh.
 
@@ -14,4 +14,4 @@ Nội dung:
 - Dùng giọng đọc hệ thống, không dùng MP3 xử lý.
 
 
-V1.7: Mỗi lượt luyện đều đọc lại câu hỏi trước khi đọc câu trả lời.
+V1.8: Thêm chế độ Kiểm tra đi kèm Bài 1: chỉ đọc và hiện câu hỏi, chờ 5 giây, sau đó mới hiện nút Xem câu trả lời.
